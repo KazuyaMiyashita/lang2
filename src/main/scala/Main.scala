@@ -20,8 +20,9 @@ object Main extends App {
       try {
         val tokens    = Tokenizer.tokenize(input)
         val term      = Parser.parse(tokens).get
+        val tpe       = TypeChecker.check(term, env)
         val evaluated = Evaluator.eval(term, env)
-        println(s"result: ${evaluated.value}")
+        println(s"result: ${tpe.asString} = ${evaluated.value}")
       } catch {
         case NonFatal(e) => println(e.getMessage)
       } finally {

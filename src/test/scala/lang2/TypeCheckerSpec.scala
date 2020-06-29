@@ -4,8 +4,9 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import Term._
+import Type._
 
-class EvaluatorSpec extends AnyFlatSpec with Matchers {
+class TypeCheckerSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 1" in {
 
@@ -29,8 +30,8 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
         )
       )
     )
-    val reuslt   = Evaluator.eval(term, env)
-    val expected = Num(7)
+    val reuslt   = TypeChecker.check(term, env)
+    val expected = NumType
 
     reuslt shouldEqual expected
 
@@ -53,7 +54,10 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    Evaluator.eval(term, env) shouldEqual Num(1)
+    val reuslt   = TypeChecker.check(term, env)
+    val expected = NumType
+
+    reuslt shouldEqual expected
 
   }
 
@@ -74,8 +78,8 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    assertThrows[Exception] {
-      Evaluator.eval(term, env)
+    assertThrows[TypeChecker.IllegalArgumentTypeError] {
+      TypeChecker.check(term, env)
     }
 
   }

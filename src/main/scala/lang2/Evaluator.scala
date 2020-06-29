@@ -13,7 +13,7 @@ object Evaluator {
           case None => throw new RuntimeException(s"function $functionName not found")
           case Some(func) => {
             val argsType = Type.listToFunctionType(consts)
-            if (argsType != func.tpe) throw new Type.TypeError(argsType, func.tpe)
+            if (argsType != func.tpe) throw new Exception
             else func.apply(consts)
           }
         }

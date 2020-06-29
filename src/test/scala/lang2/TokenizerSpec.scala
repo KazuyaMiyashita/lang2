@@ -27,4 +27,19 @@ class TokenizerSpec extends AnyFlatSpec with Matchers {
 
   }
 
+  it should "tokenize 2" in {
+
+    val input = "if true 1 0"
+    val token = Tokenizer.tokenize(input)
+    val expected = List(
+      Command("if"),
+      Boole(true),
+      Numeric(1),
+      Numeric(0)
+    )
+
+    token shouldEqual expected
+
+  }
+
 }

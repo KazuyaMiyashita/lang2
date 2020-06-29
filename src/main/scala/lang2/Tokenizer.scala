@@ -3,7 +3,7 @@ package lang2
 import Token._
 
 object Tokenizer {
-  private def handleCommand(remaining: List[Char], acc: List[Token]): (List[Char], List[Token]) = {
+  private def handleString(remaining: List[Char], acc: List[Token]): (List[Char], List[Token]) = {
     def loop(remaining: List[Char], chars: List[Char]): (List[Char], List[Char]) = {
       remaining match {
         case head :: tail if ('a' to 'z').contains(head) => loop(tail, head :: chars)
@@ -11,7 +11,13 @@ object Tokenizer {
       }
     }
     val (newRemaing, newAcc) = loop(remaining, Nil)
-    (newRemaing, Command(newAcc.reverse.mkString) :: acc)
+    val str                  = newAcc.reverse.mkString
+    val token = str match {
+      case "true"  => Boole(true)
+      case "false" => Boole(false)
+      case _       => Command(str)
+    }
+    (newRemaing, token :: acc)
   }
   private def handleNumeric(remaining: List[Char], acc: List[Token]): (List[Char], List[Token]) = {
     def loop(remaining: List[Char], chars: List[Char]): (List[Char], List[Char]) = {
@@ -30,7 +36,7 @@ object Tokenizer {
         case '(' :: tail => loop(tail, LParen :: acc)
         case ')' :: tail => loop(tail, RParen :: acc)
         case head :: _ if ('a' to 'z').contains(head) => {
-          val (newRemaing, newAcc) = handleCommand(remaining, acc)
+          val (newRemaing, newAcc) = handleString(remaining, acc)
           loop(newRemaing, newAcc)
         }
         case head :: _ if ('0' to '9').contains(head) => {

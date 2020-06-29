@@ -14,7 +14,8 @@ object Parser {
           (i, r, terms ::: args)
         }
         case (_, RParen :: tail, _)     => (parenIndex - 1, tail, terms.reverse)
-        case (_, Numeric(v) :: tail, _) => loop(parenIndex, tail, Const(v) :: terms)
+        case (_, Numeric(v) :: tail, _) => loop(parenIndex, tail, Num(v) :: terms)
+        case (_, Boole(v) :: tail, _)   => loop(parenIndex, tail, Bool(v) :: terms)
         case (_, Command(v) :: tail, _) => {
           val (i, r, args) = loop(parenIndex, tail, Nil)
           loop(i, r, Apply(v, args) :: terms)

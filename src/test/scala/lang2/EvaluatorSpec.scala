@@ -7,32 +7,76 @@ import Term._
 
 class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
-  val env = Environment(
-    Map(
-      "add" -> Func.add,
-      "mul" -> Func.mul
-    )
-  )
+  it should "evaluator 1" in {
 
-  it should "parser 1" in {
+    val env = Environment(
+      Map(
+        "add" -> Func.add,
+        "mul" -> Func.mul
+      )
+    )
 
     val term = Apply(
       "add",
       List(
-        Const(1),
+        Num(1),
         Apply(
           "mul",
           List(
-            Const(2),
-            Const(3)
+            Num(2),
+            Num(3)
           )
         )
       )
     )
     val reuslt   = Evaluator.eval(term, env)
-    val expected = Const(7)
+    val expected = Num(7)
 
     reuslt shouldEqual expected
+
+  }
+
+  it should "evaluator 2" in {
+
+    val env = Environment(
+      Map(
+        "ifnum" -> Func.ifnum
+      )
+    )
+
+    val term = Apply(
+      "ifnum",
+      List(
+        Bool(true),
+        Num(1),
+        Num(0)
+      )
+    )
+
+    Evaluator.eval(term, env) shouldEqual Num(1)
+
+  }
+
+  it should "evaluator 3" in {
+
+    val env = Environment(
+      Map(
+        "ifnum" -> Func.ifnum
+      )
+    )
+
+    val term = Apply(
+      "ifnum",
+      List(
+        Bool(true),
+        Num(1),
+        Bool(false)
+      )
+    )
+
+    assertThrows[Type.TypeError] {
+      Evaluator.eval(term, env)
+    }
 
   }
 

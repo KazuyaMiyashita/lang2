@@ -10,8 +10,12 @@ object Evaluator {
       case Apply(functionName, args) => {
         val consts = args.map(eval(_, env))
         env.functions.get(functionName) match {
-          case None       => throw new RuntimeException(s"function $functionName not found")
-          case Some(func) => func.apply(consts)
+          case None => throw new RuntimeException(s"function $functionName not found")
+          case Some(func) => {
+            val argsType = Type.listToFunctionType(consts)
+            if (argsType != func.tpe) throw new Type.TypeError(argsType, func.tpe)
+            else func.apply(consts)
+          }
         }
       }
     }

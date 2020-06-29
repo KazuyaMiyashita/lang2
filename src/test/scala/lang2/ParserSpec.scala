@@ -25,12 +25,12 @@ class ParserSpec extends AnyFlatSpec with Matchers {
     val expected = Apply(
       "add",
       List(
-        Const(1),
+        Num(1),
         Apply(
           "mul",
           List(
-            Const(2),
-            Const(3)
+            Num(2),
+            Num(3)
           )
         )
       )

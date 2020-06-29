@@ -5,8 +5,9 @@ object Main extends App {
 
   val env = Environment(
     Map(
-      "add" -> Func.add,
-      "mul" -> Func.mul
+      "add"   -> Func.add,
+      "mul"   -> Func.mul,
+      "ifnum" -> Func.ifnum
     )
   )
 
@@ -16,30 +17,15 @@ object Main extends App {
     val input = io.StdIn.readLine()
     if (input == ":exit") ()
     else {
-      var tokens: List[Token]   = null
-      var term: Term            = null
-      var evaluated: Term.Const = null
       try {
-        tokens = Tokenizer.tokenize(input)
-        term = Parser.parse(tokens).get
-        evaluated = Evaluator.eval(term, env)
+        val tokens    = Tokenizer.tokenize(input)
+        val term      = Parser.parse(tokens).get
+        val evaluated = Evaluator.eval(term, env)
         println(s"result: ${evaluated.value}")
       } catch {
-        case NonFatal(e) => {
-          val message =
-            if (input eq null) "* input read error *"
-            else if (tokens eq null) "* tokenize error *"
-            else if (term eq null) "* parse error *"
-            else if (evaluated eq null) "* evaluation error *"
-            else ""
-          println(message)
-          e.printStackTrace()
-          println(s"input: $input")
-          println(s"tokens: $tokens")
-          println(s"term: $term")
-          println(s"evaluated: $evaluated")
-        }
+        case NonFatal(e) => println(e.getMessage)
       } finally {
+        println()
         loop()
       }
     }
@@ -48,7 +34,7 @@ object Main extends App {
 
   println("*** LANG2 CONSOLE***")
   println("enter a formula. For example (add 1 (mul 2 3)) . The reuslt is 7.")
-  println("Built-in functions are `add` and `mul`.")
+  println("Built-in functions are `add`, `mul`, `ifnum`.")
   println("enter :exit to exit this console.")
   println()
 

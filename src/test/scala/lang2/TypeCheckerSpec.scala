@@ -8,7 +8,7 @@ import Type._
 
 class TypeCheckerSpec extends AnyFlatSpec with Matchers {
 
-  it should "evaluator 1" in {
+  it should "typeChecker 1" in {
 
     val env = Environment(
       Map(
@@ -37,7 +37,7 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
 
   }
 
-  it should "evaluator 2" in {
+  it should "typeChecker 2" in {
 
     val env = Environment(
       Map(
@@ -61,7 +61,7 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
 
   }
 
-  it should "evaluator 3" in {
+  it should "typeChecker 3" in {
 
     val env = Environment(
       Map(
@@ -81,6 +81,30 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
     assertThrows[TypeChecker.IllegalArgumentTypeError] {
       TypeChecker.check(term, env)
     }
+
+  }
+
+  it should "typeChecker 4" in {
+
+    val env = Environment(
+      Map(
+        "echonum" -> Func.echonum,
+        "mul"     -> Func.mul
+      )
+    )
+
+    val term = Block(
+      List(
+        Apply("echonum", List(Num(1))),
+        Bool(true),
+        Apply("mul", List(Num(2), Num(3)))
+      )
+    )
+
+    val reuslt   = TypeChecker.check(term, env)
+    val expected = NumType
+
+    reuslt shouldEqual expected
 
   }
 

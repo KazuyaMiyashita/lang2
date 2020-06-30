@@ -1,22 +1,30 @@
 package lang2
-import lang2.Term.Apply
+
+import lang2.Term._
 
 object TypeChecker {
 
   def check(term: Term, env: Environment): Type = {
+    checkEnv(term, env)._1
+  }
+
+  def checkEnv(term: Term, env: Environment): (Type, Environment) = {
     term match {
-      case t: Const => t.tpe
+      case t: Const => (t.tpe, env)
       case Apply(functionName, args) => {
         env.functions.get(functionName) match {
           case None => throw new RuntimeException(s"function $functionName not found")
           case Some(func) => {
             val argsType = args.map(check(_, env))
-            func.tpe.applyTypes(argsType) match {
-              case Some(nextType) => nextType
+            func.matchesArgsType(argsType) match {
+              case Some(nextType) => (nextType, env)
               case None           => throw new TypeChecker.IllegalArgumentTypeError(func, argsType)
             }
           }
         }
+      }
+      case Block(terms) => {
+        terms.foldLeft(((Type.UnitType: Type), env))((te, term) => checkEnv(term, te._2))
       }
     }
   }

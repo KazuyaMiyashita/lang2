@@ -5,10 +5,38 @@ import Type._
 
 trait Func {
   def name: String
-  def apply(args: List[Const]): Const
   def tpe: FunctionType
-  def argsType: List[Type]
-  def resultType: Type
+  def apply(args: List[Const]): Const
+
+  private def tpeToList(ft: FunctionType): List[Type] = {
+    (ft.a, ft.b) match {
+      case (_: Type, t: FunctionType) => ft.a :: tpeToList(t)
+      case (_, _)                     => ft.a :: ft.b :: Nil
+    }
+  }
+  final def argsType: List[Type] = tpeToList(tpe).init
+  final def resultType: Type     = tpeToList(tpe).last
+
+  final def matchesArgsType(args: List[Type]): Option[Type] = {
+    def applyTypes(ft: FunctionType, args: List[Type]): Option[Type] = {
+      args match {
+        case Nil => Some(ft)
+        case head :: tail =>
+          applyType(ft, head) match {
+            case Some(next: FunctionType)   => applyTypes(next, tail)
+            case Some(next) if tail.isEmpty => Some(next)
+            case _                          => None
+          }
+      }
+    }
+
+    def applyType(ft: FunctionType, thatType: Type): Option[Type] = {
+      if (ft.a == thatType) Some(ft.b)
+      else None
+    }
+
+    applyTypes(tpe, args)
+  }
 }
 
 object Func {
@@ -22,9 +50,7 @@ object Func {
       }
     }
 
-    override def tpe                  = FunctionType(NumType, NumType)
-    override def argsType: List[Type] = NumType :: NumType :: Nil
-    override def resultType: Type     = NumType
+    override def tpe = NumType ->: NumType ->: NumType
   }
 
   val mul: Func = new Func {
@@ -36,9 +62,7 @@ object Func {
       }
     }
 
-    override def tpe                  = FunctionType(NumType, NumType)
-    override def argsType: List[Type] = NumType :: NumType :: Nil
-    override def resultType: Type     = NumType
+    override def tpe = NumType ->: NumType ->: NumType
   }
 
   val ifnum: Func = new Func {
@@ -50,11 +74,22 @@ object Func {
       }
     }
 
-    override def tpe = {
-      FunctionType(BoolType, FunctionType(NumType, NumType))
+    override def tpe = BoolType ->: NumType ->: NumType ->: NumType
+  }
+
+  val echonum: Func = new Func {
+    override def name: String = "echonum"
+    override def apply(args: List[Const]): Const = {
+      args match {
+        case Num(n1) :: Nil => {
+          println(n1)
+          Uni
+        }
+        case _ => throw new IllegalArgumentException
+      }
     }
-    override def argsType: List[Type] = BoolType :: NumType :: NumType :: Nil
-    override def resultType: Type     = NumType
+
+    override def tpe = NumType ->: NumType
   }
 
 }

@@ -68,15 +68,34 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
     val term = Apply(
       "ifnum",
       List(
-        Bool(true),
+        Bool(false),
         Num(1),
         Bool(false)
       )
     )
 
-    assertThrows[Exception] {
-      Evaluator.eval(term, env)
-    }
+    // ifnum はNumのみを返すはずだが、ここでは型のチェックを行わないのでBoolが返る
+    Evaluator.eval(term, env) shouldEqual Bool(false)
+
+  }
+
+  it should "evaluator 4" in {
+
+    val env = Environment(
+      Map(
+        "mul" -> Func.mul
+      )
+    )
+
+    val term = Block(
+      List(
+        Num(1),
+        Bool(true),
+        Apply("mul", List(Num(2), Num(3)))
+      )
+    )
+
+    Evaluator.eval(term, env) shouldEqual Num(6)
 
   }
 

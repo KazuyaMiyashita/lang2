@@ -1,8 +1,11 @@
 package lang2
 
+import Type._
+
 sealed trait Type {
   def parent: Option[Type]
   def asString: String
+  def ->:(that: Type): FunctionType = FunctionType(that, this)
 }
 
 object Type {
@@ -22,18 +25,6 @@ object Type {
   case class FunctionType(a: Type, b: Type) extends Type {
     override val parent   = Some(AnyType)
     override val asString = "(" + a.asString + " -> " + b.asString + ")"
-
-    def toList: List[Type] = {
-      (a, b) match {
-        case (_: Type, t: FunctionType) => a :: t.toList
-        case (_, _)                     => a :: b :: Nil
-      }
-    }
-
-    def applyTypes(args: List[Type]): Option[Type] = {
-      if (args == toList) Some(toList.last)
-      else None
-    }
   }
   case object UnitType extends Type {
     override val parent   = Some(AnyType)

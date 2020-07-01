@@ -1,22 +1,24 @@
 package lang2
 
 sealed trait Term
-sealed trait Const extends Term {
-  def value: Any
-  def tpe: Type
-}
 
 object Term {
+  sealed trait Const extends Term {
+    def value: Any
+    def tpe: Type
+  }
+
   case class Bool(value: Boolean) extends Const {
-    override def tpe = Type.BoolType
+    override def tpe = Type.Bool
   }
   case class Num(value: Int) extends Const {
-    override def tpe = Type.NumType
+    override def tpe = Type.Num
   }
-  case object Uni extends Const {
+  case object Unit extends Const {
     override val value = ()
-    override def tpe   = Type.UnitType
+    override def tpe   = Type.Unit
   }
   case class Apply(functionName: String, args: List[Term]) extends Term
+  // case class Lambda(argName: String, term: Term)           extends Term
   case class Block(terms: List[Term])                      extends Term
 }

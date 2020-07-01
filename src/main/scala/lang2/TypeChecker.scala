@@ -1,7 +1,5 @@
 package lang2
 
-import lang2.Term._
-
 object TypeChecker {
 
   def check(term: Term, env: Environment): Type = {
@@ -10,8 +8,8 @@ object TypeChecker {
 
   def checkEnv(term: Term, env: Environment): (Type, Environment) = {
     term match {
-      case t: Const => (t.tpe, env)
-      case Apply(functionName, args) => {
+      case t: Term.Const => (t.tpe, env)
+      case Term.Apply(functionName, args) => {
         env.functions.get(functionName) match {
           case None => throw new RuntimeException(s"function $functionName not found")
           case Some(func) => {
@@ -23,8 +21,8 @@ object TypeChecker {
           }
         }
       }
-      case Block(terms) => {
-        terms.foldLeft(((Type.UnitType: Type), env))((te, term) => checkEnv(term, te._2))
+      case Term.Block(terms) => {
+        terms.foldLeft(((Type.Unit: Type), env))((te, term) => checkEnv(term, te._2))
       }
     }
   }

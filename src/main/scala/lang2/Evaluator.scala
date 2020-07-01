@@ -1,17 +1,15 @@
 package lang2
 
-import Term._
-
 object Evaluator {
 
-  def eval(term: Term, env: Environment): Const = {
+  def eval(term: Term, env: Environment): Term.Const = {
     evalEnv(term, env)._1
   }
 
-  def evalEnv(term: Term, env: Environment): (Const, Environment) = {
+  def evalEnv(term: Term, env: Environment): (Term.Const, Environment) = {
     term match {
-      case t: Const => (t, env)
-      case Apply(functionName, args) => {
+      case t: Term.Const => (t, env)
+      case Term.Apply(functionName, args) => {
         env.functions.get(functionName) match {
           case None => throw new RuntimeException(s"function $functionName not found")
           case Some(func) => {
@@ -20,8 +18,8 @@ object Evaluator {
           }
         }
       }
-      case Block(terms) => {
-        terms.foldLeft(((Uni: Const), env))((te, term) => evalEnv(term, te._2))
+      case Term.Block(terms) => {
+        terms.foldLeft(((Term.Unit: Term.Const), env))((te, term) => evalEnv(term, te._2))
       }
     }
   }

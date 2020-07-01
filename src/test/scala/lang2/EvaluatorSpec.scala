@@ -3,8 +3,6 @@ package lang2
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-import Term._
-
 class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 1" in {
@@ -16,21 +14,21 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Apply(
+    val term = Term.Apply(
       "add",
       List(
-        Num(1),
-        Apply(
+        Term.Num(1),
+        Term.Apply(
           "mul",
           List(
-            Num(2),
-            Num(3)
+            Term.Num(2),
+            Term.Num(3)
           )
         )
       )
     )
     val reuslt   = Evaluator.eval(term, env)
-    val expected = Num(7)
+    val expected = Term.Num(7)
 
     reuslt shouldEqual expected
 
@@ -44,16 +42,16 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Apply(
+    val term = Term.Apply(
       "ifnum",
       List(
-        Bool(true),
-        Num(1),
-        Num(0)
+        Term.Bool(true),
+        Term.Num(1),
+        Term.Num(0)
       )
     )
 
-    Evaluator.eval(term, env) shouldEqual Num(1)
+    Evaluator.eval(term, env) shouldEqual Term.Num(1)
 
   }
 
@@ -65,17 +63,17 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Apply(
+    val term = Term.Apply(
       "ifnum",
       List(
-        Bool(false),
-        Num(1),
-        Bool(false)
+        Term.Bool(false),
+        Term.Num(1),
+        Term.Bool(false)
       )
     )
 
     // ifnum はNumのみを返すはずだが、ここでは型のチェックを行わないのでBoolが返る
-    Evaluator.eval(term, env) shouldEqual Bool(false)
+    Evaluator.eval(term, env) shouldEqual Term.Bool(false)
 
   }
 
@@ -87,15 +85,15 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Block(
+    val term = Term.Block(
       List(
-        Num(1),
-        Bool(true),
-        Apply("mul", List(Num(2), Num(3)))
+        Term.Num(1),
+        Term.Bool(true),
+        Term.Apply("mul", List(Term.Num(2), Term.Num(3)))
       )
     )
 
-    Evaluator.eval(term, env) shouldEqual Num(6)
+    Evaluator.eval(term, env) shouldEqual Term.Num(6)
 
   }
 

@@ -1,45 +1,43 @@
 package lang2
 
-import Type._
-
 sealed trait Type {
   def parent: Option[Type]
   def asString: String
-  def ->:(that: Type): FunctionType = FunctionType(that, this)
+  def ->:(that: Type): Type.Function = Type.Function(that, this)
 }
 
 object Type {
 
-  case object AnyType extends Type {
+  case object Any extends Type {
     override val parent   = None
     override val asString = "Any"
   }
-  case object BoolType extends Type {
-    override val parent   = Some(AnyType)
+  case object Bool extends Type {
+    override val parent   = Some(Type.Any)
     override val asString = "Bool"
   }
-  case object NumType extends Type {
-    override val parent   = Some(AnyType)
+  case object Num extends Type {
+    override val parent   = Some(Type.Any)
     override val asString = "Num"
   }
-  case class FunctionType(a: Type, b: Type) extends Type {
-    override val parent   = Some(AnyType)
+  case class Function(a: Type, b: Type) extends Type {
+    override val parent   = Some(Type.Any)
     override val asString = "(" + a.asString + " -> " + b.asString + ")"
   }
-  case object UnitType extends Type {
-    override val parent   = Some(AnyType)
+  case object Unit extends Type {
+    override val parent   = Some(Type.Any)
     override val asString = "Unit"
   }
-  case object NothingType extends Type {
-    override val parent   = Some(AnyType)
+  case object Nothing extends Type {
+    override val parent   = Some(Type.Any)
     override val asString = "Nothing"
   }
 
-  def listToFunctionType(list: List[Const]): Type = {
+  def listToFunctionType(list: List[Term.Const]): Type = {
     list match {
-      case Nil          => UnitType
+      case Nil          => Type.Unit
       case head :: Nil  => head.tpe
-      case head :: next => FunctionType(head.tpe, listToFunctionType(next))
+      case head :: next => Type.Function(head.tpe, listToFunctionType(next))
     }
   }
 
@@ -54,7 +52,7 @@ object Type {
   }
 
   def upper(t1: Type, t2: Type): Type = {
-    getHierarchy(t1).intersect(getHierarchy(t2)).headOption.getOrElse(AnyType)
+    getHierarchy(t1).intersect(getHierarchy(t2)).headOption.getOrElse(Type.Any)
   }
 
 }

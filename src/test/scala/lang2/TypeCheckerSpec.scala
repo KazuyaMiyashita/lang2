@@ -3,9 +3,6 @@ package lang2
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-import Term._
-import Type._
-
 class TypeCheckerSpec extends AnyFlatSpec with Matchers {
 
   it should "typeChecker 1" in {
@@ -17,21 +14,21 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Apply(
+    val term = Term.Apply(
       "add",
       List(
-        Num(1),
-        Apply(
+        Term.Num(1),
+        Term.Apply(
           "mul",
           List(
-            Num(2),
-            Num(3)
+            Term.Num(2),
+            Term.Num(3)
           )
         )
       )
     )
     val reuslt   = TypeChecker.check(term, env)
-    val expected = NumType
+    val expected = Type.Num
 
     reuslt shouldEqual expected
 
@@ -45,17 +42,17 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Apply(
+    val term = Term.Apply(
       "ifnum",
       List(
-        Bool(true),
-        Num(1),
-        Num(0)
+        Term.Bool(true),
+        Term.Num(1),
+        Term.Num(0)
       )
     )
 
     val reuslt   = TypeChecker.check(term, env)
-    val expected = NumType
+    val expected = Type.Num
 
     reuslt shouldEqual expected
 
@@ -69,12 +66,12 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Apply(
+    val term = Term.Apply(
       "ifnum",
       List(
-        Bool(true),
-        Num(1),
-        Bool(false)
+        Term.Bool(true),
+        Term.Num(1),
+        Term.Bool(false)
       )
     )
 
@@ -93,16 +90,16 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Block(
+    val term = Term.Block(
       List(
-        Apply("echonum", List(Num(1))),
-        Bool(true),
-        Apply("mul", List(Num(2), Num(3)))
+        Term.Apply("echonum", List(Term.Num(1))),
+        Term.Bool(true),
+        Term.Apply("mul", List(Term.Num(2), Term.Num(3)))
       )
     )
 
     val reuslt   = TypeChecker.check(term, env)
-    val expected = NumType
+    val expected = Type.Num
 
     reuslt shouldEqual expected
 

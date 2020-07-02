@@ -28,7 +28,7 @@ object TypeChecker {
   }
 
   class IllegalArgumentTypeError(func: Func, foundTypes: List[Type])
-      extends Exception(
+      extends Lang2Error(
         s"TypeError: function `${func.name}` requires arguments: ${func.argsType
           .map(_.asString)
           .mkString("(", ", ", ")")} , but found: ${foundTypes.map(_.asString).mkString("(", ", ", ")")}"

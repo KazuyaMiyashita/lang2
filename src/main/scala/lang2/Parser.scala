@@ -12,8 +12,6 @@ object Parser {
         case (n, _) if n < 0 => throw new ParseError("Unexpected brackets")
         case (_, Token.LParen :: tail) => {
           val (_, r, tr) = loop(parenIndex + 1, tail, Node.empty[Token])
-          println(tr ::: trees)
-          println((tr ::: trees).compact.reverse)
           (parenIndex, r, tr ::: trees)
         }
         case (_, Token.RParen :: tail) => (parenIndex - 1, tail, trees)

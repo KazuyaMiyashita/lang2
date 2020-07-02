@@ -29,6 +29,64 @@ class ParserSpec extends AnyFlatSpec with Matchers {
 
   }
 
+  it should "makeTree 2" in {
+
+    // "(let n 1 (let f (lambda x (add n x)) (f 2)))"
+    val tokens = List(
+      Token.LParen,
+      Token.Let,
+      Token.Word("n"),
+      Token.Num(1),
+      Token.LParen,
+      Token.Let,
+      Token.Word("f"),
+      Token.LParen,
+      Token.Lambda,
+      Token.Word("x"),
+      Token.LParen,
+      Token.Word("add"),
+      Token.Word("n"),
+      Token.Word("x"),
+      Token.RParen,
+      Token.RParen,
+      Token.LParen,
+      Token.Word("f"),
+      Token.Num(2),
+      Token.RParen,
+      Token.RParen,
+      Token.RParen
+    )
+
+    val tree = Parser.makeTree(tokens)
+
+    val expected: Tree[Token] =
+      Node(
+        Leaf(Token.Let),
+        Leaf(Token.Word("n")),
+        Leaf(Token.Num(1)),
+        Node(
+          Leaf(Token.Let),
+          Leaf(Token.Word("f")),
+          Node(
+            Leaf(Token.Lambda),
+            Leaf(Token.Word("x")),
+            Node(
+              Leaf(Token.Word("add")),
+              Leaf(Token.Word("n")),
+              Leaf(Token.Word("x"))
+            )
+          ),
+          Node(
+            Leaf(Token.Word("f")),
+            Leaf(Token.Num(2))
+          )
+        )
+      )
+
+    tree shouldEqual expected
+
+  }
+
   it should "parse 1" in {
 
     val tokens = List(

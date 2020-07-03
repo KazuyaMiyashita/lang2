@@ -3,6 +3,8 @@ package lang2
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import Tree.{Node, Leaf}
+
 class TreeSpec extends AnyFlatSpec with Matchers {
 
   "Tree" should "reverse 1" in {
@@ -58,22 +60,131 @@ class TreeSpec extends AnyFlatSpec with Matchers {
     compacted shouldEqual expected
   }
 
-  "Node" should "::: 1" in {
-    val left     = new Node(List(Leaf(1), Leaf(2)))
-    val right    = new Node(List(Leaf(3), Leaf(4)))
-    val concat   = left ::: right
-    val expected = new Node(List(Node(Leaf(1), Leaf(2)), Node(List(Leaf(3), Leaf(4)))))
+  "Tree#makeTree" should "a b c" in {
+    val tokens   = "abc".toList
+    val tree     = Tree.makeTree(tokens, '(', ')')
+    val expected = Node(Leaf('a'), Leaf('b'), Leaf('c'))
 
-    concat shouldEqual expected
+    tree shouldEqual expected
   }
 
-  "Node" should "::: 2" in {
-    val left     = Node(Leaf(1))
-    val right    = Node(Leaf(2), Leaf(3))
-    val concat   = left ::: right
-    val expected = Node(Node(Leaf(1)), Node(Leaf(2), Leaf(3)))
+  "Tree#makeTree" should "((a) (b) (c))" in {
+    val tokens   = "((a)(b)(c))".toList
+    val tree     = Tree.makeTree(tokens, '(', ')')
+    val expected = Node(Leaf('a'), Leaf('b'), Leaf('c'))
 
-    concat shouldEqual expected
+    tree shouldEqual expected
+  }
+
+  "Tree#makeTree" should "(a (b c))" in {
+    val tokens   = "(a(bc))".toList
+    val tree     = Tree.makeTree(tokens, '(', ')')
+    val expected = Node(Leaf('a'), Node(Leaf('b'), Leaf('c')))
+
+    tree shouldEqual expected
+  }
+
+  "Tree#makeTree" should "(a b (c d))" in {
+    val tokens = "(ab(cd))".toList
+    val tree   = Tree.makeTree(tokens, '(', ')')
+    val expected = Node(
+      Leaf('a'),
+      Leaf('b'),
+      Node(
+        Leaf('c'),
+        Leaf('d')
+      )
+    )
+    tree shouldEqual expected
+  }
+
+  // ここから落ちる
+  "Tree#makeTree" should "(a (b (c d))" in {
+    val tokens = "(a(b(cd)))".toList
+    val tree   = Tree.makeTree(tokens, '(', ')')
+    val expected = Node(
+      Leaf('a'),
+      Node(
+        Leaf('b'),
+        Node(
+          Leaf('c'),
+          Leaf('d')
+        )
+      )
+    )
+    tree shouldEqual expected
+  }
+
+  "Tree#makeTree" should "(a b (c d (e f g)))" in {
+    val tokens = "(ab(cd(efg)))".toList
+    val tree   = Tree.makeTree(tokens, '(', ')')
+    val expected = Node(
+      Leaf('a'),
+      Leaf('b'),
+      Node(
+        Leaf('c'),
+        Leaf('d'),
+        Node(
+          Leaf('e'),
+          Leaf('f'),
+          Leaf('g')
+        )
+      )
+    )
+
+    tree shouldEqual expected
+  }
+
+  "Tree#makeTree" should "(let f (lambda x (add n x))" in {
+    val tokens =
+      "(" :: "let" :: "f" :: "(" :: "lambda" :: "x" :: "(" :: "add" :: "n" :: "x" :: ")" :: ")" :: Nil
+    val tree = Tree.makeTree(tokens, "(", ")")
+    val expected =
+      Node(
+        Leaf("let"),
+        Leaf("f"),
+        Node(
+          Leaf("lambda"),
+          Leaf("x"),
+          Node(
+            Leaf("add"),
+            Leaf("n"),
+            Leaf("x")
+          )
+        )
+      )
+
+    tree shouldEqual expected
+  }
+
+  "Tree#makeTree" should "(let n 1 (let f (lambda x (add n x)) (f 2)))" in {
+    val tokens =
+      "(" :: "let" :: "n" :: "1" :: "(" :: "let" :: "f" :: "(" :: "lambda" :: "x" :: "(" :: "add" :: "n" :: "x" :: ")" :: ")" :: "(" :: "f" :: "2" :: ")" :: ")" :: ")" :: Nil
+    val tree = Tree.makeTree(tokens, "(", ")")
+    val expected = Node(
+      Leaf("let"),
+      Leaf("n"),
+      Leaf("1"),
+      Node(
+        Leaf("let"),
+        Leaf("f"),
+        Node(
+          Leaf("lambda"),
+          Leaf("x"),
+          Node(
+            Leaf("add"),
+            Leaf("n"),
+            Leaf("x")
+          )
+        ),
+        Node(
+          Leaf("f"),
+          Leaf("2")
+        )
+      )
+    )
+
+    tree shouldEqual expected
   }
 
 }

@@ -14,11 +14,11 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Term.Apply(
+    val term = Term.Function(
       "add",
       List(
         Term.Num(1),
-        Term.Apply(
+        Term.Function(
           "mul",
           List(
             Term.Num(2),
@@ -42,7 +42,7 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Term.Apply(
+    val term = Term.Function(
       "ifnum",
       List(
         Term.Bool(true),
@@ -66,7 +66,7 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Term.Apply(
+    val term = Term.Function(
       "ifnum",
       List(
         Term.Bool(true),
@@ -78,30 +78,6 @@ class TypeCheckerSpec extends AnyFlatSpec with Matchers {
     assertThrows[TypeChecker.IllegalArgumentTypeError] {
       TypeChecker.check(term, env)
     }
-
-  }
-
-  it should "typeChecker 4" in {
-
-    val env = Environment(
-      Map(
-        "echonum" -> Func.echonum,
-        "mul"     -> Func.mul
-      )
-    )
-
-    val term = Term.Block(
-      List(
-        Term.Apply("echonum", List(Term.Num(1))),
-        Term.Bool(true),
-        Term.Apply("mul", List(Term.Num(2), Term.Num(3)))
-      )
-    )
-
-    val reuslt   = TypeChecker.check(term, env)
-    val expected = Type.Num
-
-    reuslt shouldEqual expected
 
   }
 

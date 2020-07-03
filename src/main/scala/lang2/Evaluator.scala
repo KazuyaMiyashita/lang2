@@ -9,7 +9,7 @@ object Evaluator {
   def evalEnv(term: Term, env: Environment): (Term.Const, Environment) = {
     term match {
       case t: Term.Const => (t, env)
-      case Term.Apply(functionName, args) => {
+      case Term.Function(functionName, args) => {
         env.functions.get(functionName) match {
           case None => throw new RuntimeException(s"function $functionName not found")
           case Some(func) => {
@@ -18,9 +18,7 @@ object Evaluator {
           }
         }
       }
-      case Term.Block(terms) => {
-        terms.foldLeft(((Term.Unit: Term.Const), env))((te, term) => evalEnv(term, te._2))
-      }
+      case _ => ???
     }
   }
 

@@ -9,7 +9,7 @@ object TypeChecker {
   def checkEnv(term: Term, env: Environment): (Type, Environment) = {
     term match {
       case t: Term.Const => (t.tpe, env)
-      case Term.Apply(functionName, args) => {
+      case Term.Function(functionName, args) => {
         env.functions.get(functionName) match {
           case None => throw new RuntimeException(s"function $functionName not found")
           case Some(func) => {
@@ -21,9 +21,7 @@ object TypeChecker {
           }
         }
       }
-      case Term.Block(terms) => {
-        terms.foldLeft(((Type.Unit: Type), env))((te, term) => checkEnv(term, te._2))
-      }
+      case _ => ???
     }
   }
 

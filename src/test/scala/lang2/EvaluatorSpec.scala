@@ -14,11 +14,11 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Term.Apply(
+    val term = Term.Function(
       "add",
       List(
         Term.Num(1),
-        Term.Apply(
+        Term.Function(
           "mul",
           List(
             Term.Num(2),
@@ -42,7 +42,7 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Term.Apply(
+    val term = Term.Function(
       "ifnum",
       List(
         Term.Bool(true),
@@ -63,7 +63,7 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
       )
     )
 
-    val term = Term.Apply(
+    val term = Term.Function(
       "ifnum",
       List(
         Term.Bool(false),
@@ -74,26 +74,6 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
     // ifnum はNumのみを返すはずだが、ここでは型のチェックを行わないのでBoolが返る
     Evaluator.eval(term, env) shouldEqual Term.Bool(false)
-
-  }
-
-  it should "evaluator 4" in {
-
-    val env = Environment(
-      Map(
-        "mul" -> Func.mul
-      )
-    )
-
-    val term = Term.Block(
-      List(
-        Term.Num(1),
-        Term.Bool(true),
-        Term.Apply("mul", List(Term.Num(2), Term.Num(3)))
-      )
-    )
-
-    Evaluator.eval(term, env) shouldEqual Term.Num(6)
 
   }
 

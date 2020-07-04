@@ -12,8 +12,10 @@ object Term {
   case object Unit extends Const {
     override val value = ()
   }
+  case class Lambda(argName: String, term: Term) extends Const {
+    def value = "(lambda)"
+  }
   case class Function(functionName: String, args: List[Term])  extends Term
   case class Var(name: String)                                 extends Term
   case class Let(variableName: String, init: Term, term: Term) extends Term
-  case class Lambda(argName: String, term: Term)               extends Term
 }

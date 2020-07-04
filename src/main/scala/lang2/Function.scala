@@ -45,23 +45,4 @@ object Function {
     }
   }
 
-  def createNumFunction(argName: String, term: Term): Function = new Function {
-    override def apply(args: List[Term.Const]): Term.Const = {
-      val arg = args.head
-      def replace(term: Term): Term = {
-        term match {
-          case Term.Function(fn, args)           => Term.Function(fn, args.map(replace))
-          case Term.Var(name) if name == argName => arg
-          case Term.Let(vn, init, term)          => Term.Let(vn, replace(term), replace(term))
-          case Term.Lambda(an, term)             => Term.Lambda(an, replace(term))
-          case other                             => other
-        }
-      }
-      replace(term) match {
-        case n1: Term.Num => n1
-        case _            => throw new IllegalArgumentException
-      }
-    }
-  }
-
 }

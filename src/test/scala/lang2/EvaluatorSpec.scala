@@ -2,20 +2,14 @@ package lang2
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import scala.collection.mutable
 
 class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 1" in {
 
-    val env = Environment(
-      parent = None,
-      variables = mutable.Map.empty,
-      functions = mutable.Map(
-        "add" -> Function.add,
-        "mul" -> Function.mul
-      )
-    )
+    val env = Environment.empty
+      .withFunction("add", Function.add)
+      .withFunction("mul", Function.mul)
 
     val term = Term.Function(
       "add",
@@ -39,13 +33,8 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 2" in {
 
-    val env = Environment(
-      parent = None,
-      variables = mutable.Map.empty,
-      functions = mutable.Map(
-        "ifnum" -> Function.ifnum
-      )
-    )
+    val env = Environment.empty
+      .withFunction("ifnum", Function.ifnum)
 
     val term = Term.Function(
       "ifnum",
@@ -62,13 +51,8 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 3" in {
 
-    val env = Environment(
-      parent = None,
-      variables = mutable.Map.empty,
-      functions = mutable.Map(
-        "ifnum" -> Function.ifnum
-      )
-    )
+    val env = Environment.empty
+      .withFunction("ifnum", Function.ifnum)
 
     val term = Term.Function(
       "ifnum",
@@ -86,13 +70,7 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 4" in {
 
-    val env = Environment(
-      parent = None,
-      variables = mutable.Map.empty,
-      functions = mutable.Map(
-        "add" -> Function.add
-      )
-    )
+    val env = Environment.empty
 
     val term = Term.Let(
       "n",
@@ -106,11 +84,7 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 5" in {
 
-    val env = Environment(
-      parent = None,
-      variables = mutable.Map.empty,
-      functions = mutable.Map.empty
-    )
+    val env = Environment.empty
 
     val term = Term.Let(
       "f",
@@ -127,13 +101,20 @@ class EvaluatorSpec extends AnyFlatSpec with Matchers {
 
   it should "evaluator 6" in {
 
-    val env = Environment(
-      parent = None,
-      variables = mutable.Map.empty,
-      functions = mutable.Map(
-        "add" -> Function.add
-      )
-    )
+    val env = Environment.empty
+      .withFunction("add", Function.add)
+
+    val term =
+      Term.Lambda("x", Term.Function("add", List(Term.Var("x"), Term.Num(1))))
+
+    Evaluator.eval(term, env) shouldEqual term
+
+  }
+
+  it should "evaluator 7" in {
+
+    val env = Environment.empty
+      .withFunction("add", Function.add)
 
     val term = Term.Let(
       "n",

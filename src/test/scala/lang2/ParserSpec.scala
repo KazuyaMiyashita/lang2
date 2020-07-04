@@ -8,7 +8,7 @@ class ParserSpec extends AnyFlatSpec with Matchers {
   it should "parse 1" in {
 
     val tree: Tree[Token] = Tree.Leaf(Token.Num(1))
-    val term              = Parser.parseFromTree(tree)
+    val term              = Parser.parseTree(tree)
     val expected          = Term.Num(1)
 
     term shouldEqual expected
@@ -26,7 +26,7 @@ class ParserSpec extends AnyFlatSpec with Matchers {
         Tree.Leaf(Token.Num(3))
       )
     )
-    val term = Parser.parseFromTree(tree)
+    val term = Parser.parseTree(tree)
     val expected = Term.Function(
       "add",
       List(
@@ -45,17 +45,18 @@ class ParserSpec extends AnyFlatSpec with Matchers {
 
   }
 
-  // it should "parse 2" in {
-  //   // "let n 1 n"
-  //   val tokens = List(
-  //     Token.Let,
-  //     Token.Num(1),
-  //     Token.Word("n")
-  //   )
-  //   val term     = Parser.parse(tokens).get
-  //   val expected = Term.Let("n", Term.Num(1), Term.Var("n"))
-  //   term shouldEqual expected
-  // }
+  it should "parse 3" in {
+    // "let n 1 n"
+    val tree: Tree[Token] = Tree.Node(
+      Tree.Leaf(Token.Let),
+      Tree.Leaf(Token.Word("n")),
+      Tree.Leaf(Token.Num(1)),
+      Tree.Leaf(Token.Word("n"))
+    )
+    val term     = Parser.parseTree(tree)
+    val expected = Term.Let("n", Term.Num(1), Term.Var("n"))
+    term shouldEqual expected
+  }
 
   // it should "parse 3" in {
 

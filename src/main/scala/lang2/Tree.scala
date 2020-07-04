@@ -33,24 +33,23 @@ object Tree {
     def loop(
         parenLevel: Int,
         remaining: List[A],
-        acc: Node[A]
-    ): (Int, List[A], Node[A]) = {
+        acc: List[Tree[A]]
+    ): (Int, List[A], List[Tree[A]]) = {
       remaining match {
         case `lp` :: tail => {
-          val (i, r, t) = loop(parenLevel + 1, tail, Node.empty[A])
-          (i, r, new Node(t.children ::: acc.children))
+          val (i, r, t) = loop(parenLevel + 1, tail, Nil)
+          loop(i, r, t ::: acc)
         }
         case `rp` :: tail => {
           if (parenLevel < 0) throw new ParseTreeError("Unexpected brackets")
-          else loop(parenLevel - 1, tail, new Node(acc :: Nil))
+          else (parenLevel - 1, tail, new Node(acc) :: Nil)
         }
-        case elem :: tail => {
-          loop(parenLevel, tail, new Node(Leaf(elem) :: acc.children))
-        }
-        case Nil => (parenLevel, Nil, acc)
+        case elem :: tail => loop(parenLevel, tail, Leaf(elem) :: acc)
+        case Nil          => (parenLevel, Nil, acc)
       }
     }
-    loop(0, list, Node.empty[A])._3.compact.reverse
+    val acc = loop(0, list, Nil)._3
+    new Node(acc).compact.reverse
   }
 
   class ParseTreeError(message: String) extends Lang2Error("ParseError: " + message)

@@ -58,47 +58,64 @@ class ParserSpec extends AnyFlatSpec with Matchers {
     term shouldEqual expected
   }
 
-  // it should "parse 3" in {
+  it should "parse 4" in {
+    // "lambda x (add x 1)"
+    val tree: Tree[Token] = Tree.Node(
+      Tree.Leaf(Token.Lambda),
+      Tree.Leaf(Token.Word("x")),
+      Tree.Node(
+        Tree.Leaf(Token.Word("add")),
+        Tree.Leaf(Token.Word("x")),
+        Tree.Leaf(Token.Num(1))
+      )
+    )
+    val term     = Parser.parseTree(tree)
+    val expected = Term.Lambda("x", Term.Function("add", List(Term.Var("x"), Term.Num(1))))
 
-  //   // "(let n 1 (let f (lambda x (add n x)) (f 2)))"
-  //   val tokens = List(
-  //     Token.LParen,
-  //     Token.Let,
-  //     Token.Word("n"),
-  //     Token.Num(1),
-  //     Token.LParen,
-  //     Token.Let,
-  //     Token.Word("f"),
-  //     Token.LParen,
-  //     Token.Lambda,
-  //     Token.Word("x"),
-  //     Token.LParen,
-  //     Token.Word("add"),
-  //     Token.Word("n"),
-  //     Token.Word("x"),
-  //     Token.RParen,
-  //     Token.RParen,
-  //     Token.LParen,
-  //     Token.Word("f"),
-  //     Token.Num(2),
-  //     Token.RParen,
-  //     Token.RParen,
-  //     Token.RParen
-  //   )
-  //   val term = Parser.parse(tokens).get
-  //   val expected =
-  //     Term.Let(
-  //       "n",
-  //       Term.Num(1),
-  //       Term.Let(
-  //         "f",
-  //         Term.Lambda("x", Term.Function("add", List(Term.Var("n"), Term.Var("x")))),
-  //         Term.Function("f", List(Term.Num(2)))
-  //       )
-  //     )
+    term shouldEqual expected
+  }
 
-  //   term shouldEqual expected
+  it should "parse 5" in {
 
-  // }
+    // "(let n 1 (let f (lambda x (add n x)) (f 2)))"
+    val tokens = List(
+      Token.LParen,
+      Token.Let,
+      Token.Word("n"),
+      Token.Num(1),
+      Token.LParen,
+      Token.Let,
+      Token.Word("f"),
+      Token.LParen,
+      Token.Lambda,
+      Token.Word("x"),
+      Token.LParen,
+      Token.Word("add"),
+      Token.Word("n"),
+      Token.Word("x"),
+      Token.RParen,
+      Token.RParen,
+      Token.LParen,
+      Token.Word("f"),
+      Token.Num(2),
+      Token.RParen,
+      Token.RParen,
+      Token.RParen
+    )
+    val term = Parser.parse(tokens)
+    val expected =
+      Term.Let(
+        "n",
+        Term.Num(1),
+        Term.Let(
+          "f",
+          Term.Lambda("x", Term.Function("add", List(Term.Var("n"), Term.Var("x")))),
+          Term.Function("f", List(Term.Num(2)))
+        )
+      )
+
+    term shouldEqual expected
+
+  }
 
 }

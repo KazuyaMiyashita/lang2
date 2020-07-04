@@ -13,7 +13,10 @@ object Parser {
         }
       case Tree.Node(Tree.Leaf(Token.Let) :: Tree.Leaf(Token.Word(variableName)) :: init :: block :: Nil) =>
         Term.Let(variableName, parseTree(init), parseTree(block))
-      case Tree.Node(Tree.Leaf(Token.Let) :: _)                   => throw new ParseError("Unexpected let")
+      case Tree.Node(Tree.Leaf(Token.Let) :: _) => throw new ParseError("Illegal argument let")
+      case Tree.Node(Tree.Leaf(Token.Lambda) :: Tree.Leaf(Token.Word(argName)) :: term :: Nil) =>
+        Term.Lambda(argName, parseTree(term))
+      case Tree.Node(Tree.Leaf(Token.Lambda) :: _)                => throw new ParseError("Illegal argument lambda")
       case Tree.Node(Tree.Leaf(Token.Word(functionName)) :: args) => Term.Function(functionName, args.map(parseTree))
       case _                                                      => ???
     }

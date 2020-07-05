@@ -45,4 +45,10 @@ object Function {
     }
   }
 
+  val error: Function = new Function {
+    override def apply(args: List[Term.Const]): Term.Const = {
+      throw new RuntimeException
+    }
+  }
+
 }
